@@ -20,6 +20,17 @@ class _HomeState extends State<Home> {
 
   List _todoList = [];
 
+  @override
+  void initState() {
+    super.initState();
+
+    _readData().then((data) {
+      setState(() {
+        _todoList = json.decode(data);
+      });
+    });
+  }
+
   void _addToDo() {
     setState(() {
       Map<String, dynamic> newToDo = new Map();
@@ -27,6 +38,8 @@ class _HomeState extends State<Home> {
       _toDoController.text = "";
       newToDo["ok"] = false;
       _todoList.add(newToDo);
+
+      _saveData();
     });
   }
 
@@ -70,10 +83,12 @@ class _HomeState extends State<Home> {
                     value: _todoList[index]["ok"],
                     secondary: CircleAvatar(
                       child: Icon(
-                          _todoList[index]["ok"] ? Icons.check : Icons.error), ),
+                          _todoList[index]["ok"] ? Icons.check : Icons.error),
+                    ),
                     onChanged: (c) {
                       setState(() {
                         _todoList[index]["ok"] = c;
+                        _saveData();
                       });
                     },
                   );
