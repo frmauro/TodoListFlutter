@@ -16,13 +16,18 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   final _toDoController = TextEditingController();
 
   List _todoList = [];
 
-  void _addToDo(){
-
+  void _addToDo() {
+    setState(() {
+      Map<String, dynamic> newToDo = new Map();
+      newToDo["title"] = _toDoController.text;
+      _toDoController.text = "";
+      newToDo["ok"] = false;
+      _todoList.add(newToDo);
+    });
   }
 
   @override
@@ -40,36 +45,38 @@ class _HomeState extends State<Home> {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child:  TextField(
-                     controller: _toDoController,
-                      decoration: InputDecoration(
-                          labelText: "Nova Tarefa",
-                          labelStyle: TextStyle(color: Colors.blueAccent)
-                      ),
-                    )
-                ),
+                    child: TextField(
+                  controller: _toDoController,
+                  decoration: InputDecoration(
+                      labelText: "Nova Tarefa",
+                      labelStyle: TextStyle(color: Colors.blueAccent)),
+                )),
                 RaisedButton(
                   color: Colors.blueAccent,
                   child: Text("ADD"),
                   textColor: Colors.white,
-                  onPressed: (){},
+                  onPressed: _addToDo,
                 )
               ],
             ),
           ),
           Expanded(
             child: ListView.builder(
-              padding: EdgeInsets.only(top: 10.0),
+                padding: EdgeInsets.only(top: 10.0),
                 itemCount: _todoList.length,
                 itemBuilder: (context, index) {
-                return CheckboxListTile(
-                  title: Text(_todoList[index]["title"]),
-                  value: _todoList[index]["ok"],
-                  secondary: CircleAvatar(
-                    child:  Icon(_todoList[index]["ok"] ?
-                      Icons.check : Icons.error),
-                  ),
-                );
+                  return CheckboxListTile(
+                    title: Text(_todoList[index]["title"]),
+                    value: _todoList[index]["ok"],
+                    secondary: CircleAvatar(
+                      child: Icon(
+                          _todoList[index]["ok"] ? Icons.check : Icons.error), ),
+                    onChanged: (c) {
+                      setState(() {
+                        _todoList[index]["ok"] = c;
+                      });
+                    },
+                  );
                 }),
           )
         ],
